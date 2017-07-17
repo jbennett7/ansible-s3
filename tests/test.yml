@@ -1,0 +1,33 @@
+---
+- name: Test the creation of a single S3 bucket.
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    - s3_bucket_state: present
+    - s3_bucket_name: "jbnewyork-test-bucket"
+  roles:
+    - role: ansible-s3
+      tags: test_create
+
+- name: Test the deletion of a single S3 bucket.
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    - s3_bucket_state: absent
+    - s3_bucket_name: "jbnewyork-test-bucket"
+  roles:
+    - role: ansible-s3
+      tags: test_delete
+
+- name: "Test failing when s3_bucket_name has a dot (.)"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    - s3_bucket_state: present
+    - s3_bucket_name: "jbnewyork.test.bucket"
+  roles:
+    - role: ansible-s3
+      tags: test_fail

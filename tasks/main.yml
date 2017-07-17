@@ -1,5 +1,8 @@
 ---
-# NOTE: S3 buckets with dots (.) in there name causes problems with amazon and ssl certificates.
+- name: "Fail if {{ s3_bucket_name }} has dots (.)"
+  fail:
+  when: "'.' in s3_bucket_name"
+
 - name: "Make sure the s3 bucket is {{ s3_bucket_state }}."
   s3_bucket:
     state: "{{ s3_bucket_state }}"
@@ -39,4 +42,3 @@
     suffix: "{{ s3_bucket_event_suffix }}"
     events: "{{ s3_bucket_enumerated_events }}"
   when: s3_bucket_event_queue_arn is defined
-
