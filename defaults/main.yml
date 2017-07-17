@@ -1,0 +1,9 @@
+---
+# defaults file for s3
+s3_bucket_state: present
+s3_bucket_policy: "{}"
+s3_bucket_validate_cert: true
+s3_bucket_event_state: present
+s3_bucket_event_prefix: ""
+s3_bucket_event_suffix: ""
+

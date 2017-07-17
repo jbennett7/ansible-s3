@@ -1,0 +1,42 @@
+---
+# NOTE: S3 buckets with dots (.) in there name causes problems with amazon and ssl certificates.
+- name: "Make sure the s3 bucket is {{ s3_bucket_state }}."
+  s3_bucket:
+    state: "{{ s3_bucket_state }}"
+    name: "{{ s3_bucket_name }}"
+    policy: "{{ s3_bucket_policy }}"
+  when: "'.' not in s3_bucket_name"
+
+- name: "Make sure the s3 bucket lambda event {{ s3_bucket_event_id }} is {{ s3_bucket_event_state }}."
+  s3_event:
+    state: "{{ s3_bucket_event_state }}"
+    bucket: "{{ s3_bucket_name }}"
+    id: "{{ s3_bucket_event_id }}"
+    lambda_function_arn: "{{ s3_bucket_event_lambda_function_arn }}"
+    prefix: "{{ s3_bucket_event_prefix }}"
+    suffix: "{{ s3_bucket_event_suffix }}"
+    events: "{{ s3_bucket_enumerated_events }}"
+  when: s3_bucket_event_lambda_function_arn is defined
+
+- name: "Make sure the s3 bucket sns event {{ s3_bucket_event_id }} is {{ s3_bucket_event_state }}."
+  s3_event:
+    state: "{{ s3_bucket_event_state }}"
+    bucket: "{{ s3_bucket_name }}"
+    id: "{{ s3_bucket_event_id }}"
+    topic_arn: "{{ s3_bucket_event_topic_arn }}"
+    prefix: "{{ s3_bucket_event_prefix }}"
+    suffix: "{{ s3_bucket_event_suffix }}"
+    events: "{{ s3_bucket_enumerated_events }}"
+  when: s3_bucket_event_topic_arn is defined
+
+- name: "Make sure the s3 bucket sqs event {{ s3_bucket_event_id }} is {{ s3_bucket_event_state }}."
+  s3_event:
+    state: "{{ s3_bucket_event_state }}"
+    bucket: "{{ s3_bucket_name }}"
+    id: "{{ s3_bucket_event_id }}"
+    queue_arn: "{{ s3_bucket_event_queue_arn }}"
+    prefix: "{{ s3_bucket_event_prefix }}"
+    suffix: "{{ s3_bucket_event_suffix }}"
+    events: "{{ s3_bucket_enumerated_events }}"
+  when: s3_bucket_event_queue_arn is defined
+
