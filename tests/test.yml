@@ -6,9 +6,36 @@
   vars:
     - s3_bucket_state: present
     - s3_bucket_name: "jbnewyork-test-bucket"
+    - object_prefix: "upload/"
+    - object_put_name: "put_image.jpg"
+    - object_get_name: "get_image.jpg"
+    - files_dir: "files"
+    - s3_bucket_policy_template: "files/policy.json.j2"
+  pre_tasks:
+    - name: "Convert policy file"
+      template:
+          src: "{{ s3_bucket_policy_template }}"
+          dest: "{{ files_dir }}/policy.json"
+      tags: test_create
   roles:
     - role: ansible-s3
       tags: test_create
+      vars:
+        - s3_bucket_policy: "{{ lookup('file','files/policy.json') }}"
+  post_tasks:
+      - name: "PUT image object in bucket."
+        s3:
+            bucket: "{{ s3_bucket_name }}"
+            object: "{{ object_prefix }}/{{ object_put_name }}"
+            src: "{{ files_dir }}/{{ object_put_name }}"
+            mode: put
+        tags: test_create
+      - name: "Delete the object in the bucket."
+        s3:
+            bucket: "{{ s3_bucket_name }}"
+            object: "{{ object_prefix }}/{{ object_put_name }}"
+            mode: delobj
+        tags: test_create
 
 - name: Test the deletion of a single S3 bucket.
   hosts: localhost
